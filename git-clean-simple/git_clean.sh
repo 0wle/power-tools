@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#TODO boolean
 #TODO flags für logs oder nicht
 #TODO flags für quiet
 #TODO filepath mit datum
