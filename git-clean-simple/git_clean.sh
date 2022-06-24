@@ -1,50 +1,9 @@
 #!/bin/bash
 
-#TODO flags für logs oder nicht
-# -l
-#TODO flag für filepath specification logs
-# -L value
-#TODO flags für quiet
-# -q
 #TODO dry run functionality with logging
 # -t
 #TODO recursive flag
 # -r
-#TODO cleanup directory specification
-# -d value
-
-shouldLog=false;
-filepathLog=$(pwd);
-filepathStart=$(pwd);
-isQuiet=false;
-while getopts 'lL:qtrd:' OPTION; do
-    case "$OPTION" in
-        l)
-            shouldLog=true;
-            ;;
-        L)
-            shouldLog=true;
-            filepathLog="$OPTARG";
-            ;;
-        q)
-            isQuiet=true
-            ;;
-        t)
-            echo "Du willst einen dry-run ohne tatsächliche Löschngen machen!"
-            ;;
-        r)
-            echo "Du willst rekursiv doch die Ordner iterieren"
-            ;;
-        d)
-            filepathStart="$OPTARG"
-            ;;
-        ?)
-            echo "Hier kommt die Spezifikation des Programms"
-            exit 1
-            ;;
-    esac
-done
-shift "$(($OPTIND -1))"
 
 function delete {
     output=$(git clean -x -f);
@@ -80,12 +39,58 @@ function runDelete {
     fi
 }
 
+function throwError {
+    case "$1" in
+        "log")
+            echo "Only one logging related flag allowed"
+            exit 1;
+    esac
+}
+
+shouldLog=false;
+filepathLog=$(pwd);
+filepathStart=$(pwd);
+isQuiet=false;
+while getopts 'lL:qtrd:' OPTION; do
+    case "$OPTION" in
+        l)
+            if [ shouldLog = true ]; then
+                throwError "log"
+            fi
+            shouldLog=true;
+            ;;
+        L)
+            if [ shouldLog = true ]; then
+                throwError "log"
+            fi
+            shouldLog=true;
+            filepathLog=$(realpath "$OPTARG");
+            ;;
+        q)
+            isQuiet=true
+            ;;
+        t)
+            echo "Du willst einen dry-run ohne tatsächliche Löschngen machen!"
+            ;;
+        r)
+            echo "Du willst rekursiv doch die Ordner iterieren"
+            ;;
+        d)
+            filepathStart=$(realpath "$OPTARG");
+            ;;
+        ?)
+            echo "Hier kommt die Spezifikation des Programms"
+            exit 1
+            ;;
+    esac
+done
+shift "$(($OPTIND -1))"
+
 cd $filepathStart
 filepathLog="$filepathLog/$(date +%d-%m-%y)_clean-log.txt"
-echo $filepathLog
 didSomething=false
 for DIR in */; do
-    runDelete $didSomething $filepathLog $shouldLog $isQuiet
+runDelete $didSomething $filepathLog $shouldLog $isQuiet
 cd $DIR
     runDelete $didSomething $filepathLog $shouldLog $isQuiet
 cd ..; done
