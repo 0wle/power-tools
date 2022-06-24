@@ -1,9 +1,18 @@
 #!/bin/bash
 
 #TODO flags für logs oder nicht
-#TODO flag für filepath specification
+# -l
+#TODO flag für filepath specification logs
+# -p value
 #TODO flags für quiet
+# -q
 #TODO dry run functionality with logging
+# -t
+#TODO recursive flag
+# -r
+#TODO cleanup directory specification
+# -d value
+
 
 function delete {
     output=$(git clean -x -f);
@@ -32,6 +41,18 @@ function checkForNoDeletions {
         fi
     fi
 }
+
+while getopts 'lpqtrdhelp:' OPTION; do
+    case "$OPTION" in
+        l)
+            echo "Flags work!"
+            ;;
+        ?)
+            echo "script usage"
+            exit 1
+            ;;
+    esac
+done
 
 specifiedLocation=false
 filepath=""
