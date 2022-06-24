@@ -3,7 +3,7 @@
 #TODO flags für logs oder nicht
 # -l
 #TODO flag für filepath specification logs
-# -p value
+# -L value
 #TODO flags für quiet
 # -q
 #TODO dry run functionality with logging
@@ -42,13 +42,28 @@ function checkForNoDeletions {
     fi
 }
 
-while getopts 'lpqtrdhelp:' OPTION; do
+while getopts 'lLqtrdhelp:' OPTION; do
     case "$OPTION" in
         l)
-            echo "Flags work!"
+            echo "Du willst logs!"
             ;;
+        L)
+            echo "Du willst logs, an einem bestimmenten path!"
+            ;;
+        q)
+            echo "Du willst keine Konsolenausgaben!"
+            ;;
+        t)
+            echo "Du willst einen dry-run ohne tatsächliche Löschngen machen!"
+            ;;
+        r)
+            echo "Du willst rekursiv doch die Ordner iterieren"
+            ;;
+        d)
+            echo "Du willst einen Startpunkt spezifizieren!"
+        
         ?)
-            echo "script usage"
+            echo "Hier kommt die Spezifikation des Programms"
             exit 1
             ;;
     esac
