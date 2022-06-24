@@ -17,16 +17,16 @@
 function delete {
     output=$(git clean -x -f);
     if [ "$output" != "" ]; then
-        if [ "$1" = false ]; then
-            echo "TIME: $(date +%H-%M-%S)" >> "$2";
-            didSomething=true;
-        fi
         if [ "$3" = true ]; then
+            if [ "$1" = false ]; then
+            echo "TIME: $(date +%H-%M-%S)" >> "$2";
+            fi
             echo "$output" >> "$2";
         fi
         if [ "$4" = false ]; then
             echo "$output";
         fi
+        didSomething=true;
     fi
 }
 
@@ -42,16 +42,28 @@ function checkForNoDeletions {
     fi
 }
 
-while getopts 'lLqtrdhelp:' OPTION; do
+function runDelete {
+    if [ -d "./.git/" ]; then
+        delete $1 $2 $3 $4
+    fi
+}
+
+shouldLog=false;
+filepathLog=$(pwd);
+filepathStart=$(pwd);
+isQuiet=false;
+while getopts 'lLqtrd:' OPTION; do
     case "$OPTION" in
         l)
-            echo "Du willst logs!"
+            shouldLog=true;
+            filepathLog=$(pwd);
             ;;
         L)
-            echo "Du willst logs, an einem bestimmenten path!"
+            shouldLog=true;
+            filepathLog="$OPTARG";
             ;;
         q)
-            echo "Du willst keine Konsolenausgaben!"
+            isQuiet=true
             ;;
         t)
             echo "Du willst einen dry-run ohne tatsächliche Löschngen machen!"
@@ -60,8 +72,8 @@ while getopts 'lLqtrdhelp:' OPTION; do
             echo "Du willst rekursiv doch die Ordner iterieren"
             ;;
         d)
-            echo "Du willst einen Startpunkt spezifizieren!"
-        
+            filepathStart="$OPTARG"
+            ;;
         ?)
             echo "Hier kommt die Spezifikation des Programms"
             exit 1
@@ -69,22 +81,12 @@ while getopts 'lLqtrdhelp:' OPTION; do
     esac
 done
 
-specifiedLocation=false
-filepath=""
-if [ specifiedLocation = false ];
-then
-    filepath=$(pwd);
-else
-    # exchange this for the arg value
-    filepath=$(pwd);
-fi
-
-filepath="$filepath/$(date +%d-%m-%y)_clean-log.txt"
+cd $filepathStart
+filepathLog="$filepathLog/$(date +%d-%m-%y)_clean-log.txt"
 didSomething=false
-shouldLog=true
-isQuiet=false
 for DIR in */; do
-cd $DIR 
-    delete $didSomething $filepath $shouldLog $isQuiet
+    runDelete $didSomething $filepathLog $shouldLog $isQuiet
+cd $DIR
+    runDelete $didSomething $filepathLog $shouldLog $isQuiet
 cd ..; done
-checkForNoDeletions $didSomething $filepath $shouldLog $isQuiet
+checkForNoDeletions $didSomething $filepathLog $shouldLog $isQuiet
