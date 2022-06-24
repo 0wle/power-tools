@@ -13,6 +13,38 @@
 #TODO cleanup directory specification
 # -d value
 
+shouldLog=false;
+filepathLog=$(pwd);
+filepathStart=$(pwd);
+isQuiet=false;
+while getopts 'lL:qtrd:' OPTION; do
+    case "$OPTION" in
+        l)
+            shouldLog=true;
+            ;;
+        L)
+            shouldLog=true;
+            filepathLog="$OPTARG";
+            ;;
+        q)
+            isQuiet=true
+            ;;
+        t)
+            echo "Du willst einen dry-run ohne tatsächliche Löschngen machen!"
+            ;;
+        r)
+            echo "Du willst rekursiv doch die Ordner iterieren"
+            ;;
+        d)
+            filepathStart="$OPTARG"
+            ;;
+        ?)
+            echo "Hier kommt die Spezifikation des Programms"
+            exit 1
+            ;;
+    esac
+done
+shift "$(($OPTIND -1))"
 
 function delete {
     output=$(git clean -x -f);
@@ -48,41 +80,9 @@ function runDelete {
     fi
 }
 
-shouldLog=false;
-filepathLog=$(pwd);
-filepathStart=$(pwd);
-isQuiet=false;
-while getopts 'lLqtrd:' OPTION; do
-    case "$OPTION" in
-        l)
-            shouldLog=true;
-            filepathLog=$(pwd);
-            ;;
-        L)
-            shouldLog=true;
-            filepathLog="$OPTARG";
-            ;;
-        q)
-            isQuiet=true
-            ;;
-        t)
-            echo "Du willst einen dry-run ohne tatsächliche Löschngen machen!"
-            ;;
-        r)
-            echo "Du willst rekursiv doch die Ordner iterieren"
-            ;;
-        d)
-            filepathStart="$OPTARG"
-            ;;
-        ?)
-            echo "Hier kommt die Spezifikation des Programms"
-            exit 1
-            ;;
-    esac
-done
-
 cd $filepathStart
 filepathLog="$filepathLog/$(date +%d-%m-%y)_clean-log.txt"
+echo $filepathLog
 didSomething=false
 for DIR in */; do
     runDelete $didSomething $filepathLog $shouldLog $isQuiet
