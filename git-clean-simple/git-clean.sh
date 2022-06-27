@@ -8,7 +8,11 @@
 #TODO add repository name in outputs as prefix
 
 function delete {
+    if [ "$6" = false ]; then
     output=$(git clean -x -f);
+    else
+    output=$(git clean -x -n);
+    fi
     if [ "$output" != "" ]; then
         if [ "$3" = true ]; then
             if [ "$1" = false ]; then
@@ -45,7 +49,8 @@ shouldLog=false;
 filepathLog=$(pwd);
 filepathStart=$(pwd);
 isQuiet=false;
-while getopts 'lL:qtrd:' OPTION; do
+isDryRun=false;
+while getopts 'lL:qnrd:' OPTION; do
     case "$OPTION" in
         l)
             shouldLog=true;
@@ -57,8 +62,8 @@ while getopts 'lL:qtrd:' OPTION; do
         q)
             isQuiet=true
             ;;
-        t)
-            echo "Not implemented"
+        n)
+            isDryRun=true
             ;;
         r)
             echo "Not implemented"
@@ -71,7 +76,7 @@ while getopts 'lL:qtrd:' OPTION; do
             echo "l     log will be dumped in current directory"
             echo "L     log will be dumped in specified directory"
             echo "q     quiet mode"
-            echo "t     dry run without any actual deletions"
+            echo "n     dry run without any actual deletions"
             echo "r     recursively iterate through every sub directory"
             echo "d     specify the starting directory"
             exit 1
