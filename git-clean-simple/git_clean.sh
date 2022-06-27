@@ -4,6 +4,9 @@
 # -t
 #TODO recursive flag
 # -r
+# TODO help page
+
+#TODO add repository name in outputs as prefix
 
 function delete {
     output=$(git clean -x -f);
@@ -12,10 +15,10 @@ function delete {
             if [ "$1" = false ]; then
             echo "TIME: $(date +%H-%M-%S)" >> "$2";
             fi
-            echo "$output" >> "$2";
+            echo "$5$output" >> "$2";
         fi
         if [ "$4" = false ]; then
-            echo "$output";
+            echo "$5$output";
         fi
         didSomething=true;
     fi
@@ -39,14 +42,6 @@ function runDelete {
     fi
 }
 
-function throwError {
-    case "$1" in
-        "log")
-            echo "Only one logging related flag allowed"
-            exit 1;
-    esac
-}
-
 shouldLog=false;
 filepathLog=$(pwd);
 filepathStart=$(pwd);
@@ -54,15 +49,9 @@ isQuiet=false;
 while getopts 'lL:qtrd:' OPTION; do
     case "$OPTION" in
         l)
-            if [ shouldLog = true ]; then
-                throwError "log"
-            fi
             shouldLog=true;
             ;;
         L)
-            if [ shouldLog = true ]; then
-                throwError "log"
-            fi
             shouldLog=true;
             filepathLog=$(realpath "$OPTARG");
             ;;
@@ -70,16 +59,22 @@ while getopts 'lL:qtrd:' OPTION; do
             isQuiet=true
             ;;
         t)
-            echo "Du willst einen dry-run ohne tatsächliche Löschngen machen!"
+            echo "Not implemented"
             ;;
         r)
-            echo "Du willst rekursiv doch die Ordner iterieren"
+            echo "Not implemented"
             ;;
         d)
             filepathStart=$(realpath "$OPTARG");
             ;;
         ?)
-            echo "Hier kommt die Spezifikation des Programms"
+            echo "git_clean [-l | -L directory] [-q] [-t] [-r] [-d]"
+            echo "l     log will be dumped in current directory"
+            echo "L     log will be dumped in specified directory"
+            echo "q     quiet mode"
+            echo "t     dry run without any actual deletions"
+            echo "r     recursively iterate through every sub directory"
+            echo "d     specify the starting directory"
             exit 1
             ;;
     esac
@@ -90,8 +85,8 @@ cd $filepathStart
 filepathLog="$filepathLog/$(date +%d-%m-%y)_clean-log.txt"
 didSomething=false
 for DIR in */; do
-runDelete $didSomething $filepathLog $shouldLog $isQuiet
+runDelete $didSomething $filepathLog $shouldLog $isQuiet $DIR
 cd $DIR
-    runDelete $didSomething $filepathLog $shouldLog $isQuiet
+    runDelete $didSomething $filepathLog $shouldLog $isQuiet $DIR
 cd ..; done
 checkForNoDeletions $didSomething $filepathLog $shouldLog $isQuiet
