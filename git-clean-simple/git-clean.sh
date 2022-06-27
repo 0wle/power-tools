@@ -4,7 +4,6 @@
 # -t
 #TODO recursive flag
 # -r
-# TODO help page
 
 #TODO add repository name in outputs as prefix
 
