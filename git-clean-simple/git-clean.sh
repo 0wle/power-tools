@@ -1,12 +1,5 @@
 #!/bin/bash
 
-#TODO dry run functionality with logging
-# -t
-#TODO recursive flag
-# -r
-
-#TODO add repository name in outputs as prefix
-
 function delete {
     if [ "$6" = false ]; then
     output=$(git clean -x -f);
