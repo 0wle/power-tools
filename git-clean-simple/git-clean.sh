@@ -16,10 +16,9 @@ function delete {
     if [ "$output" != "" ]; then
         if [ "$3" = true ]; then
             if [ "$1" = false ]; then
-            echo "TIME: $(date +%H-%M-%S)" >> "$2";
-            fi
             echo $(pwd) >> "$2";
             echo "$output" >> "$2";
+            fi
         fi
         if [ "$4" = false ]; then
             echo $(pwd)
@@ -32,7 +31,6 @@ function delete {
 function checkForNoDeletions {
     if [ "$1" = false ]; then
         if [ "$3" = true ]; then
-            echo "TIME: $(date +%H-%M-%S)" >> "$2";
             if [ "$5" = false ]; then
             echo "No deletions occured" >> "$2";
             else
@@ -52,13 +50,17 @@ function runDelete {
 }
 
 function deleteFromSubDirectories {
-for DIR in */; do 
-cd $DIR
-    if [ $7 = true ]; then
-        deleteFromSubDirectories $1 $2 $3 $4 $DIR $6 $7
-    fi
-    runDelete $1 $2 $3 $4 $5 $6;
-cd ..; done
+    for DIR in */; do 
+    cd $DIR
+        if [ $7 = true ]; then
+            deleteFromSubDirectories $1 $2 $3 $4 $DIR $6 $7
+        fi
+        runDelete $1 $2 $3 $4 $5 $6;
+    cd ..; done
+}
+
+function setupLog {
+    echo "TIME: $(date +%H-%M-%S)" >> "$1";
 }
 
 shouldLog=false;
@@ -83,7 +85,7 @@ while getopts 'lL:qnrd:' OPTION; do
             isDryRun=true
             ;;
         r)
-            isRecursive=true
+            isRecursivdidSomethinge=true
             ;;
         d)
             filepathStart=$(realpath "$OPTARG");
@@ -105,6 +107,9 @@ shift "$(($OPTIND -1))"
 cd $filepathStart;
 filepathLog="$filepathLog/$(date +%d-%m-%y)_clean-log.txt";
 didSomething=false;
+if [ $shouldLog = true ]; then
+    setupLog $filepathLog
+fi
 runDelete $didSomething $filepathLog $shouldLog $isQuiet $filepathStart $isDryRun;
 deleteFromSubDirectories $didSomething $filepathLog $shouldLog $isQuiet $filepathStart $isDryRun $isRecursive;
 checkForNoDeletions $didSomething $filepathLog $shouldLog $isQuiet $isDryRun;
