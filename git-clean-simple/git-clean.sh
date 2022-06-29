@@ -56,13 +56,23 @@ function setupLog {
     echo "TIME: $(date +%H-%M-%S)" >> "$1";
 }
 
+function printHelp {
+    echo "git_clean [-l | -L directory] [-q] [-t] [-r] [-d]";
+    echo "l     log will be dumped in current directory";
+    echo "L     log will be dumped in specified directory";
+    echo "q     quiet mode";
+    echo "n     dry run without any actual deletions";
+    echo "r     recursively iterate through every sub directory";
+    echo "d     specify the starting directory";
+}
+
 shouldLog=false;
 filepathLog=$(pwd);
 filepathStart=$(pwd);
 isQuiet=false;
 isDryRun=false;
 isRecursive=false;
-while getopts 'lL:qnrd:' OPTION; do
+while getopts 'lL:qnrdh:' OPTION; do
     case "$OPTION" in
         l)
             shouldLog=true;
@@ -83,14 +93,12 @@ while getopts 'lL:qnrd:' OPTION; do
         d)
             filepathStart=$(realpath "$OPTARG");
             ;;
+        h)
+            printHelp
+            exit 1;
+            ;;
         ?)
-            echo "git_clean [-l | -L directory] [-q] [-t] [-r] [-d]";
-            echo "l     log will be dumped in current directory";
-            echo "L     log will be dumped in specified directory";
-            echo "q     quiet mode";
-            echo "n     dry run without any actual deletions";
-            echo "r     recursively iterate through every sub directory";
-            echo "d     specify the starting directory";
+            printHelp
             exit 1;
             ;;
     esac
