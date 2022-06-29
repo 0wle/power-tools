@@ -1,5 +1,5 @@
 # power-tools
-Small tools for everday convenience consisting of various asssortmens of scripts and such primarily for linux systems
+Small tools for everday convenience consisting of various asssortmens of scripts and programs primarily for linux systems
 
 # git-clean-simple
 A script, written in plain shell, that makes 'git clean' more powerful by extending it by various functionalities like:
