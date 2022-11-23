@@ -3,15 +3,18 @@ Small tools for everyday convenience consisting of various scripts and programs 
 
 ## git-clean-simple
 A script, written in plain shell, that makes 'git clean' more powerful by extending it by various functionalities like:
-  - iterating through each subfolder and executing a git clean, useful if you have a dedicated repository folder
-  - logging removed files in an output file
-  - recursively iterating through each sub-folder from a specified root and cleaning found repositories
-  - executing a dry run to test which files would have been deleted
+  - Iterating through each subfolder and executing a git clean, useful if you have a dedicated repository folder
+  - Logging removed files in an output file
+  - Recursively iterating through each sub-folder from a specified root and cleaning found repositories
+  - Executing a dry run to test which files would have been deleted
 
 ### HOW TO USE:
-- on default, the script uses the current directory as a starting point
-- if you want to run it on another location: use the flag `-d [starting filepath]` to specify the starting point
-- remember to make the file executable!
-- use the flag `-h` to get help info about any other flags and functionality
+- On default, the script uses the current directory as a starting point
+- Specify `-l` to output a log
+  - Or `-L [directory]` to output a log in specified directory
+- Use `-q` for quiet operation
+- Use `-r` to iterate recursively through all subfolders
+- If you want to run it on another location: use the flag `-d [starting filepath]` to specify the starting directory
+- Remember to make the file executable!
 
 The script has been developed and tested on Ubuntu 22.04 LTS
