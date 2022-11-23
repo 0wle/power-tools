@@ -16,5 +16,6 @@ A script, written in plain shell, that makes 'git clean' more powerful by extend
 - Use `-r` to iterate recursively through all subfolders
 - If you want to run it on another location: use the flag `-d [starting filepath]` to specify the starting directory
 - Remember to make the file executable!
+- Use the flag `-h` to get help info about any other flags and functionality
 
 The script has been developed and tested on Ubuntu 22.04 LTS
